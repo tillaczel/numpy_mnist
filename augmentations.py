@@ -1,6 +1,8 @@
 import numpy as np
-import cv2
 from math import floor, ceil
+import cv2
+from skimage import filters
+
 
 def reflect_x_image(image): # okay for 0, 8 (maybe 1)
     ref_mat = [[-1,0],[0,1]]
