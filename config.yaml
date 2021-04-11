@@ -1,17 +1,25 @@
+experiment:
+  model_path: 'logs/params.npy'
+
 data:
-  image_path: './data/train-images-idx3-ubyte'
-  label_path: './data/train-labels-idx1-ubyte'
-  train_fraction: 0.8
+  dev:
+    image_path: './data/train-images-idx3-ubyte'
+    label_path: './data/train-labels-idx1-ubyte'
+    train_fraction: 0.8
+  test:
+    image_path: './data/train-images-idx3-ubyte'
+    label_path: './data/train-labels-idx1-ubyte'
 
 model:
   input_dim: 784
   fc_layer_dims:
     - 128
+    - 128
     - 32
     - 10
   activation: 'ReLu'
-  dropout_p: False  # Set to False if no dropout
-  batchnorm: False # Set to False if no batchnorm
+  dropout_p: 0.01  # Set to False if no dropout
+  batchnorm: False  # Set to False if no batchnorm
 
 
 train:
@@ -21,4 +29,7 @@ train:
     lr: 0.1
     beta: 0.9
   epochs: 100
+
+eval:
+  batch_size: 64
 
