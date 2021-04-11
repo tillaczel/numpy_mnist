@@ -23,6 +23,11 @@ class Optimizer:
     def update_param(self, param, dw, i, j):
         raise NotImplementedError
 
+    def decay_learning_rate(self, i, decay_fraction = 1/2, decay_frequency = 10):
+        if i%decay_frequency == 0:
+            self.lr = self.lr * decay_fraction
+
+
 
 class SGD(Optimizer):
     def __init__(self, model, loss, lr):
