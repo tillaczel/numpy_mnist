@@ -62,7 +62,7 @@ if __name__ == "__main__":
     # Define loss
     loss = CrossEntropy()
     # Define optimizer
-    optimizer = SGD(model, loss, lr=0.1)
+    optimizer = Momentum(model, loss, lr=0.1, beta=0.9)
 
     EPOCHS = 100
 
@@ -98,6 +98,10 @@ if __name__ == "__main__":
 
     plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train')
     plt.plot(np.array(val_loss_hist)[:, 0], np.array(val_loss_hist)[:, 1], label='valid')
+    plt.legend()
+    plt.show()
+
+    plt.plot(np.array(val_acc_hist), label='val acc')
     plt.legend()
     plt.show()
 
