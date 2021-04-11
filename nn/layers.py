@@ -37,9 +37,12 @@ class DropOut(Layer):
     def backward(self, x, dy):
         return dy*self.mask, []
 
+
 class BatchNorm(Layer):
-    def __init__(self, input_dim, gamma=0.9):
+    def __init__(self, input_dim, gamma=0.9, eps=1e-5):
+        super().__init__()
         self.gamma = gamma
+        self.eps = eps
         self.run_mu = np.zeros((1, input_dim))
         self.run_var = np.zeros((1, input_dim))
 
@@ -55,8 +58,8 @@ class BatchNorm(Layer):
         else:
             mu = self.run_mu
             var = self.run_var
-        var += 10 ** -5
-        x =  (x - mu) / np.sqrt(var)
+        var = var+self.eps
+        x = (x - mu) / np.sqrt(var)
         return x
 
     def backward(self, x, dy):
