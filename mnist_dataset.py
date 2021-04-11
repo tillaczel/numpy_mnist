@@ -39,11 +39,11 @@ class MnistDataset:
             labels = self.labels[index * self.batch_size:index * self.batch_size + self.batch_size]
         # ToDo: Augmentation
         # ToDo: Normalize
-        self.norm_imgs(images)
+        images = self.norm_imgs(images)
         images_as_vec = self.img_to_vector(images)
         labels = np.eye(10)[labels]
 
-        return images_as_vec/255, labels
+        return images_as_vec, labels
 
 
 

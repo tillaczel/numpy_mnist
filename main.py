@@ -6,7 +6,7 @@ from tqdm import tqdm
 from nn.optimizers import SGD, Momentum
 from nn.losses import CrossEntropy
 from nn.activations import ReLu, LeakyReLu, SoftMax
-from nn.layers import Linear, DropOut
+from nn.layers import Linear, DropOut, BatchNorm
 from nn import Model
 from mnist_dataset import MnistDataset
 
