@@ -1,12 +1,12 @@
 import numpy as np
 
+from nn import Layer
 
-class LeakyReLu:
-    @property
-    def params(self):
-        return []
 
+class LeakyReLu(Layer):
     def __init__(self, slope=0.01):
+        super().__init__()
+
         self.slope = slope
 
     def forward(self, x):
@@ -16,13 +16,9 @@ class LeakyReLu:
         return np.where(x > 0, 1, self.slope) * dy, []
 
 
-class ReLu:
-    @property
-    def params(self):
-        return []
-
+class ReLu(Layer):
     def __init__(self):
-        pass
+        super().__init__()
 
     def forward(self, x):
         return np.maximum(0, x)
@@ -31,13 +27,9 @@ class ReLu:
         return (0<x).astype(np.int32)*dy, []
 
 
-class SoftMax:
-    @property
-    def params(self):
-        return []
-
+class SoftMax(Layer):
     def __init__(self):
-        pass
+        super().__init__()
 
     def forward(self, x):
         logit = np.exp(x-np.max(x))
