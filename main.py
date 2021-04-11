@@ -2,6 +2,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import yaml
 
 from nn.optimizers import SGD, Momentum
 from nn.losses import CrossEntropy
@@ -16,59 +17,100 @@ def set_seed(seed=43):
     random.seed(seed)
 
 
-def img_reshape(imgs): # Simpel reshaping
-    if len(imgs.shape) == 3:
-        num_imgs = imgs.shape[0]
-        return imgs.reshape((num_imgs, -1))
-    elif len(imgs.shape) == 2:
-        return imgs.reshape(-1)
-    else:
-        print("Input needs to be array with shape of length 2 or 3")
-
-
-if __name__ == "__main__":
-    # Setting seed for reproducability
-    set_seed()
-
-    # DATA
-    f = open('data/train-images-idx3-ubyte', 'r')
+def load_data(data_config):
+    f = open(data_config['image_path'], 'r')
     a = np.fromfile(f, dtype='>i4', count=4)  # data type is signed integer big-endian
     images = np.fromfile(f, dtype=np.uint8)
     images = images.reshape(a[1:])
 
-    f = open('data/train-labels-idx1-ubyte', 'r')
+    f = open(data_config['label_path'], 'r')
     t = np.fromfile(f, count=2, dtype='>i4')  # data type is signed integer big-endian
     labels = np.fromfile(f, dtype=np.uint8)
 
+    return images, labels
+
+
+def get_datasets(config):
+    # DATA
+    images, labels = load_data(config['data'])
+
     # Training- and Validation-split
     n_all_ims = images.shape[0]
-    train_fraction = 5 / 6
-    n_train_ims = round(n_all_ims * train_fraction)
+    n_train_ims = round(n_all_ims * config['data']['train_fraction'])
 
     idx_train = np.random.choice(range(n_all_ims), n_train_ims, replace=False)
     idx_val = list(set(range(n_all_ims)) - set(idx_train))
 
     X_train = images[idx_train, :]
     y_train = labels[idx_train]
-    train_dataset = MnistDataset(X_train, y_train, batch_size=64)
+    train_dataset = MnistDataset(X_train, y_train, batch_size=config['train']['batch_size'])
 
     X_val = images[idx_val, :]
     y_val = labels[idx_val]
-    val_dataset = MnistDataset(X_val, y_val, batch_size=64)
+    val_dataset = MnistDataset(X_val, y_val, batch_size=config['train']['batch_size'])
+
+    return train_dataset, val_dataset
+
+
+def get_optimizer(optimizer_config, model, loss):
+    name = optimizer_config['name']
+    lr = optimizer_config['lr']
+    if name == 'SGD':
+        return SGD(model, loss, lr=lr)
+    elif name == 'momentum':
+        return Momentum(model, loss, lr=lr, beta=optimizer_config['beta'])
+    else:
+        raise ValueError(f'Invalid optimizer: {name}')
+
+
+def get_activation_f(name):
+    if name == 'ReLu':
+        return ReLu
+    elif name == 'LeakyReLu':
+        return LeakyReLu
+    else:
+        raise ValueError(f'Invalid activation: {name}')
+
+
+def get_model(model_config):
+    input_dim = model_config['input_dim']
+    fc_layer_dims = model_config['fc_layer_dims']
+    activation_f = get_activation_f(model_config['activation'])
+    dropout_p = model_config['dropout_p']
+
+    layers = list()
+    for layer_dim in fc_layer_dims[:-1]:
+        layers.append(Linear(input_dim, layer_dim))
+        if dropout_p:
+            layers.append(DropOut(dropout_p))
+        layers.append(activation_f())
+        input_dim = layer_dim
+    layers.append(Linear(input_dim, fc_layer_dims[-1]))
+    layers.append(SoftMax())
+    return Model(layers)
+
+
+if __name__ == "__main__":
+    config_path = 'config.yaml'
+    with open(config_path) as fd:
+        config = yaml.load(fd, yaml.FullLoader)
+
+    # Setting seed for reproducability
+    set_seed()
+
+    # Get data
+    train_dataset, val_dataset = get_datasets(config)
 
     # MODEL
-    layers = [Linear(784, 32), DropOut(0.2), ReLu(), Linear(32, 10), SoftMax()]
-    model = Model(layers)
+    model = get_model(config['model'])
     # Define loss
     loss = CrossEntropy()
     # Define optimizer
-    optimizer = Momentum(model, loss, lr=0.1, beta=0.9)
-
-    EPOCHS = 100
+    optimizer = get_optimizer(config['train']['optimizer'], model, loss)
 
     # Main loop
     train_loss_hist, val_loss_hist, val_acc_hist = list(), list(), list()
-    pbar = tqdm(range(EPOCHS))
+    pbar = tqdm(range(config['train']['epochs']))
     for i in pbar:
         # TRAINING
         model.train()
@@ -96,7 +138,7 @@ if __name__ == "__main__":
         val_acc_hist.append(val_acc)
         pbar.set_postfix({'val_acc': val_acc})
 
-    plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train')
+    plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train', alpha=0.3)
     plt.plot(np.array(val_loss_hist)[:, 0], np.array(val_loss_hist)[:, 1], label='valid')
     plt.legend()
     plt.show()
