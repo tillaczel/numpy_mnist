@@ -17,8 +17,21 @@ class Linear:
     
     def backward(self, x, dy):
         return dy@self.w.T, [x.T@dy, np.ones((x.shape[0], 1)).T@dy]
-    
-    
+
+
+class LeakyReLu:
+    @property
+    def params(self):
+        return []
+
+    def __init__(self, slope=0.01):
+        self.slope = slope
+
+    def forward(self, x):
+        return np.where(x > 0, x, x * self.slope)
+
+    def backward(self, x, dy):
+        return np.where(x > 0, 1, self.slope) * dy, []
 
 class ReLu:
     @property
