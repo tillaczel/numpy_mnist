@@ -78,8 +78,8 @@ def translate_image(image):
 
 
 def crop_image(image):  # How do we resize after crop??
-    pixels_crop = np.random.randint(1,4)
-    result = image[pixels_crop:-pixels_crop,pixels_crop:-pixels_crop]
+    pixels_crop = np.random.randint(1, 4)
+    result = image[pixels_crop:-pixels_crop, pixels_crop:-pixels_crop]
     return result
 
 

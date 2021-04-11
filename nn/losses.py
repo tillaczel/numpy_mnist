@@ -20,5 +20,5 @@ class CrossEntropy:
         return -np.mean(np.sum(y*np.log(y_hat+1e-8), axis=1), axis=0)
 
     def backward(self, y, y_hat):
-        return -y/y_hat/y.shape[0]
+        return -y/(y_hat+1e-8)/y.shape[0]
 
