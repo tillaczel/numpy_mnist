@@ -1,0 +1,24 @@
+data:
+  image_path: './data/train-images-idx3-ubyte'
+  label_path: './data/train-labels-idx1-ubyte'
+  train_fraction: 0.8
+
+model:
+  input_dim: 784
+  fc_layer_dims:
+    - 128
+    - 32
+    - 10
+  activation: 'ReLu'
+  dropout_p: False  # Set to False if no dropout
+  batchnorm: False
+
+
+train:
+  batch_size: 64
+  optimizer:
+    name: 'SGD'
+    lr: 0.1
+    beta: 0.9
+  epochs: 100
+
