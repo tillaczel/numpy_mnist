@@ -11,7 +11,7 @@ def set_seed(seed=43):
 def img_reshape(imgs): # Simpel reshaping
     if len(imgs.shape) == 3:
         num_imgs = imgs.shape[0]
-        return imgs.reshape((num_imgs,-1))
+        return imgs.reshape((num_imgs, -1))
     elif len(imgs.shape) == 2:
         return imgs.reshape(-1)
     else:
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     # Define loss
     loss = CrossEntropy()
     # Define optimizer
-    optimizer = Optimizer(model, loss, lr=0.1)
+    optimizer = SGD(model, loss, lr=0.1)
 
     # TRAINING
     loss_hist = list()

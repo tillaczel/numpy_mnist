@@ -76,7 +76,7 @@ class Model:
         for layer in self.layers:
             h = layer.forward(h)
         return h
-        
+
 
 class MSE:
     def __init__(self):
@@ -115,11 +115,11 @@ class Optimizer:
         dx = self.loss.backward(y, activations[-1])
         for i, layer in enumerate(self.layers[::-1]):
             dx, dws = layer.backward(activations[-2-i], dx)
-            for param, dw in zip(layer.params, dws):
-                param = self.update_param(param, dw)
+            for j, (param, dw) in enumerate(zip(layer.params, dws)):
+                self.update_param(param, dw, i, j)
         return self.loss.forward(y, activations[-1])
 
-    def update_param(self, param, dw):
+    def update_param(self, param, dw, i, j):
         raise NotImplementedError
 
 
@@ -127,18 +127,17 @@ class SGD(Optimizer):
     def __init__(self, model, loss, lr):
         super().__init__(model, loss, lr)
 
-    def update_param(self, param, dw):
-        print(self.lr*dw)
-        return param-self.lr*dw
+    def update_param(self, param, dw, i, j):
+        param += -self.lr*dw
 
 
 class Momentum(Optimizer):
     def __init__(self, model, loss, lr, beta):
         super().__init__(model, loss, lr)
-        self.v = [np.zeros(layer.params.shape) for layer in model.layers]
+        self.v = [[np.zeros(p.shape) for p in layer.params] for layer in model.layers][::-1]
         self.beta = beta
 
-    def update_param(self, param, dw):
-        self.v = self.beta*self.v+(1-self.beta)*dw
-        return param-self.lr*self.v
+    def update_param(self, param, dw, i, j):
+        self.v[i][j] = self.beta*self.v[i][j]+(1-self.beta)*dw
+        param += -self.lr*self.v[i][j]
 
