@@ -11,7 +11,7 @@ model:
     - 10
   activation: 'ReLu'
   dropout_p: False  # Set to False if no dropout
-  batchnorm: False
+  batchnorm: False # Set to False if no batchnorm
 
 
 train:

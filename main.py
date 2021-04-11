@@ -83,7 +83,7 @@ def get_model(model_config):
     for layer_dim in fc_layer_dims[:-1]:
         layers.append(Linear(input_dim, layer_dim))
         if batchnorm:
-            layers.append(BatchNorm(layer_dim))
+            layers.append(BatchNorm(layer_dim, gamma=batchnorm))
         if dropout_p:
             layers.append(DropOut(dropout_p))
         layers.append(activation_f())
