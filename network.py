@@ -101,22 +101,43 @@ class CrossEntropy:
     
     
 class Optimizer:
-    def __init__(self, model, loss, lr=0.1):
-        self.model = model
+    def __init__(self, layers, loss, lr=0.1):
+        self.layers = layers
         self.loss = loss
         self.lr = lr
         
     def step(self, x, y):
         activations = [x.copy()]
         # Forward
-        for layer in self.model.layers:
+        for layer in self.layers:
             activations.append(layer.forward(activations[-1]))
         # Backward
         dx = self.loss.backward(y, activations[-1])
-        for i, layer in enumerate(self.model.layers[::-1]):
+        for i, layer in enumerate(self.layers[::-1]):
             dx, dws = layer.backward(activations[-2-i], dx)
             for param, dw in zip(layer.params, dws):
-                param += -self.lr*dw
+                param = self.update_param(param, dw)
         return self.loss.forward(y, activations[-1])
-        
-    
+
+    def update_param(self, param, dw):
+        raise NotImplementedError
+
+
+class SGD(Optimizer):
+    def __init__(self, layers, loss, lr):
+        super().__init__(layers, loss, lr)
+
+    def update_param(self, param, dw):
+        return param-self.lr*dw
+
+
+class Momentum(Optimizer):
+    def __init__(self, layers, loss, lr, beta):
+        super().__init__(layers, loss, lr)
+        self.v = [np.zeros(layer.params.shape) for layer in layers]
+        self.beta = beta
+
+    def update_param(self, param, dw):
+        self.v = self.beta*self.v+(1-self.beta)*dw
+        return param-self.lr*self.v
+
