@@ -1,7 +1,11 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from network import Linear, ReLu, LeakyReLu, SoftMax, Model, SGD, Momentum, MSE, CrossEntropy
+from nn.optimizers import SGD, Momentum
+from nn.losses import CrossEntropy
+from nn.activations import ReLu, LeakyReLu, SoftMax
+from nn.layers import Linear
+from nn import Model
 from mnist_dataset import MnistDataset
 
 
