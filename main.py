@@ -1,6 +1,8 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+from tqdm import tqdm
+
 from nn.optimizers import SGD, Momentum
 from nn.losses import CrossEntropy
 from nn.activations import ReLu, LeakyReLu, SoftMax
@@ -48,11 +50,11 @@ if __name__ == "__main__":
 
     X_train = images[idx_train, :]
     y_train = labels[idx_train]
-    train_dataset = MnistDataset(X_train, y_train, batch_size=X_train.shape[0])
+    train_dataset = MnistDataset(X_train, y_train, batch_size=64)
 
     X_val = images[idx_val, :]
     y_val = labels[idx_val]
-    val_dataset = MnistDataset(X_val, y_val, batch_size=X_val.shape[0])
+    val_dataset = MnistDataset(X_val, y_val, batch_size=64)
 
     # MODEL
     layers = [Linear(784, 32), DropOut(0.2), ReLu(), Linear(32, 10), SoftMax()]
@@ -65,7 +67,8 @@ if __name__ == "__main__":
     # TRAINING
     model.train()
     loss_hist = list()
-    for i in range(100):
+    EPOCHS = 100
+    for i in tqdm(range(EPOCHS)):
         for j in range(len(train_dataset)):
             x, y = train_dataset[j]
             loss_hist.append(optimizer.step(x, y))
