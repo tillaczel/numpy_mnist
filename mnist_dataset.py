@@ -1,8 +1,9 @@
 import numpy as np
+from augmentations import noise_image, blur_image, non_linear_image, rotate_image, sqeeze_image
 
 
 class MnistDataset:
-    def __init__(self, images, labels, batch_size, transforms=None):
+    def __init__(self, images, labels, batch_size, transforms=[non_linear_image]):
         self.batch_size = batch_size
         self.transforms = transforms
         # Load images
@@ -37,7 +38,12 @@ class MnistDataset:
         else:
             images = self.images[index * self.batch_size:index * self.batch_size + self.batch_size]
             labels = self.labels[index * self.batch_size:index * self.batch_size + self.batch_size]
+        
         # ToDo: Augmentation
+        for aug in self.transforms:
+            images = aug(images)
+
+        
         # ToDo: Normalize
         images = self.norm_imgs(images)
         images_as_vec = self.img_to_vector(images)
