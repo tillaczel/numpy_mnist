@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from network import Linear, ReLu, LeakyReLu, SoftMax, Model, Optimizer, MSE, CrossEntropy
+from network import Linear, ReLu, LeakyReLu, SoftMax, Model, SGD, MSE, CrossEntropy
 from mnist_dataset import MnistDataset
 
 def set_seed(seed=43):
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     val_dataset = MnistDataset(X_val, y_val, batch_size=X_val.shape[0])
 
     # MODEL
-    layers = [Linear(784, 32), LeakyReLu(), Linear(32, 10), SoftMax()]
+    layers = [Linear(784, 32), ReLu(), Linear(32, 10), SoftMax()]
     model = Model(layers)
     # Define loss
     loss = CrossEntropy()

@@ -101,8 +101,8 @@ class CrossEntropy:
     
     
 class Optimizer:
-    def __init__(self, layers, loss, lr=0.1):
-        self.layers = layers
+    def __init__(self, model, loss, lr=0.1):
+        self.layers = model.layers
         self.loss = loss
         self.lr = lr
         
@@ -124,17 +124,18 @@ class Optimizer:
 
 
 class SGD(Optimizer):
-    def __init__(self, layers, loss, lr):
-        super().__init__(layers, loss, lr)
+    def __init__(self, model, loss, lr):
+        super().__init__(model, loss, lr)
 
     def update_param(self, param, dw):
+        print(self.lr*dw)
         return param-self.lr*dw
 
 
 class Momentum(Optimizer):
-    def __init__(self, layers, loss, lr, beta):
-        super().__init__(layers, loss, lr)
-        self.v = [np.zeros(layer.params.shape) for layer in layers]
+    def __init__(self, model, loss, lr, beta):
+        super().__init__(model, loss, lr)
+        self.v = [np.zeros(layer.params.shape) for layer in model.layers]
         self.beta = beta
 
     def update_param(self, param, dw):
