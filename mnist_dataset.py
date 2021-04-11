@@ -32,10 +32,10 @@ class MnistDataset:
         if index > self.length:
             return None
         if index == self.length:
-            images = self.images[index*self.batch_size:-1]
+            images = self.images[index * self.batch_size:-1]
             labels = self.labels[index * self.batch_size:-1]
         else:
-            images = self.images[index*self.batch_size:index*self.batch_size+self.batch_size]
+            images = self.images[index * self.batch_size:index * self.batch_size + self.batch_size]
             labels = self.labels[index * self.batch_size:index * self.batch_size + self.batch_size]
         # ToDo: Augmentation
         # ToDo: Normalize

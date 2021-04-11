@@ -64,28 +64,44 @@ if __name__ == "__main__":
     # Define optimizer
     optimizer = SGD(model, loss, lr=0.1)
 
-    # TRAINING
-    model.train()
-    loss_hist = list()
     EPOCHS = 100
-    for i in tqdm(range(EPOCHS)):
+
+    # Main loop
+    train_loss_hist, val_loss_hist, val_acc_hist = list(), list(), list()
+    pbar = tqdm(range(EPOCHS))
+    for i in pbar:
+        # TRAINING
+        model.train()
         for j in range(len(train_dataset)):
             x, y = train_dataset[j]
-            loss_hist.append(optimizer.step(x, y))
-    plt.plot(loss_hist)
+            train_loss = optimizer.step(x, y)
+            train_loss_hist.append((i + j / len(train_dataset), train_loss))
+
+        # VALIDATION
+        model.eval()
+        y_hat_hist, y_hist = list(), list()
+        for j in range(len(val_dataset)):
+            x_val, y_val = val_dataset[j]
+            y_hat = model.forward(x_val)
+            y_hat_hist.append(y_hat), y_hist.append(y_val)
+
+        y_hat = np.vstack(y_hat_hist)
+        y = np.vstack(y_hist)
+        val_loss = loss.forward(y, y_hat)
+        val_loss_hist.append((i+1, val_loss))
+
+        preds = np.argmax(y_hat, axis=1)
+        real = np.argmax(y, axis=1)
+        val_acc = (preds == real).mean()
+        val_acc_hist.append(val_acc)
+        pbar.set_postfix({'val_acc': val_acc})
+
+    plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train')
+    plt.plot(np.array(val_loss_hist)[:, 0], np.array(val_loss_hist)[:, 1], label='valid')
+    plt.legend()
     plt.show()
 
-    # VALIDATION
-    model.eval()
-    correct_imgs = 0
-    total_imgs = 0
-    for i in range(len(val_dataset)):
-        x_val, y_val = val_dataset[i]
-        preds = np.argmax(model.forward(x_val), axis=1)
-        total_imgs += x_val.shape[0]
-        real = np.argmax(y_val, axis=1)
-        correct_imgs += (preds == real).sum()
-    print(f"Validation accuracy: {correct_imgs/total_imgs}")
+
 
 
 
