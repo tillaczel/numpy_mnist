@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from nn.optimizers import SGD, Momentum
 from nn.losses import CrossEntropy
 from nn.activations import ReLu, LeakyReLu, SoftMax
-from nn.layers import Linear
+from nn.layers import Linear, DropOut
 from nn import Model
 from mnist_dataset import MnistDataset
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     val_dataset = MnistDataset(X_val, y_val, batch_size=X_val.shape[0])
 
     # MODEL
-    layers = [Linear(784, 32), ReLu(), Linear(32, 10), SoftMax()]
+    layers = [Linear(784, 32), DropOut(0.2), ReLu(), Linear(32, 10), SoftMax()]
     model = Model(layers)
     # Define loss
     loss = CrossEntropy()
@@ -63,6 +63,7 @@ if __name__ == "__main__":
     optimizer = SGD(model, loss, lr=0.1)
 
     # TRAINING
+    model.train()
     loss_hist = list()
     for i in range(100):
         for j in range(len(train_dataset)):
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     plt.show()
 
     # VALIDATION
+    model.eval()
     correct_imgs = 0
     total_imgs = 0
     for i in range(len(val_dataset)):
