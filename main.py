@@ -1,12 +1,14 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from network import Linear, ReLu, LeakyReLu, SoftMax, Model, SGD, MSE, CrossEntropy
+from network import Linear, ReLu, LeakyReLu, SoftMax, Model, SGD, Momentum, MSE, CrossEntropy
 from mnist_dataset import MnistDataset
+
 
 def set_seed(seed=43):
     np.random.seed(seed)
     random.seed(seed)
+
 
 def img_reshape(imgs): # Simpel reshaping
     if len(imgs.shape) == 3:
@@ -16,6 +18,7 @@ def img_reshape(imgs): # Simpel reshaping
         return imgs.reshape(-1)
     else:
         print("Input needs to be array with shape of length 2 or 3")
+
 
 if __name__ == "__main__":
     # Setting seed for reproducability

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Linear:
     @property
     def params(self):
