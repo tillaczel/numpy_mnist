@@ -1,0 +1,38 @@
+experiment:
+  model_path: 'logs/params.npy'
+
+data:
+  dev:
+    image_path: './data/train-images-idx3-ubyte'
+    label_path: './data/train-labels-idx1-ubyte'
+    train_fraction: 0.8
+  test:
+    image_path: './data/train-images-idx3-ubyte'
+    label_path: './data/train-labels-idx1-ubyte'
+  augmentations: ["crop_image"]
+
+model:
+  input_dim: 784
+  fc_layer_dims:
+    - 512
+    - 128
+    - 10
+  activation: 'ReLu'
+  dropout_p: 0.01  # Set to False if no dropout
+  batchnorm: False  # Set to False if no batchnorm
+
+train:
+  batch_size: 64
+  optimizer:
+    name: 'momentum'
+    lr: 0.1
+    beta: 0.9
+  epochs: 100
+  lr_decay:
+    use: False
+    decay_fraction: 0.5
+    decay_frequency: 10
+
+eval:
+  batch_size: 64
+
