@@ -1,4 +1,6 @@
 import numpy as np
+
+
 class MnistDataset:
     def __init__(self, images, labels, batch_size, transforms=None):
         self.batch_size = batch_size
@@ -19,6 +21,7 @@ class MnistDataset:
             return imgs.reshape(-1)
         else:
             print("Input needs to be array with shape of length 2 or 3")
+
     def norm_imgs(self, imgs):
         return imgs/255
 
