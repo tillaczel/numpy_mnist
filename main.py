@@ -138,7 +138,7 @@ if __name__ == "__main__":
         val_acc_hist.append(val_acc)
         pbar.set_postfix({'val_acc': val_acc})
 
-    plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train', alpha=0.3)
+    plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train')
     plt.plot(np.array(val_loss_hist)[:, 0], np.array(val_loss_hist)[:, 1], label='valid')
     plt.legend()
     plt.show()
