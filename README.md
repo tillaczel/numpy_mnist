@@ -14,5 +14,5 @@ It is an implementation of a feed forward neural network in numpy for the MNIST 
 
 ## Results
 
-Validation accuracy: 97.1%
+Validation accuracy: 96.7%
 ![alt text](results/loss.png)

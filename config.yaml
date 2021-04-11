@@ -20,15 +20,15 @@ model:
     - 128
     - 10
   activation: 'ReLu'
-  dropout_p: 0.25  # Set to False if no dropout
+  dropout_p: 0.001  # Set to False if no dropout
   batchnorm: False  # Set to False if no batchnorm
 
 train:
-  epochs: 100
+  epochs: 50
   batch_size: 512
   optimizer:
     name: 'adam'
-    lr: 0.01
+    lr: 0.001
     beta: 0.9
     beta_1: 0.9
     beta_2: 0.999

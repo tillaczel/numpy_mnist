@@ -33,7 +33,8 @@ class SoftMax(Layer):
 
     def forward(self, x):
         logit = np.exp(x-np.max(x))
-        return logit/(np.sum(logit, axis=1, keepdims=True)+1e-8)
+        logit = logit/(np.sum(logit, axis=1, keepdims=True))
+        return logit
 
     def backward(self, x, dy):
         prob = self.forward(x)
