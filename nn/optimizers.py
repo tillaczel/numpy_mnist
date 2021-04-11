@@ -28,7 +28,6 @@ class Optimizer:
             self.lr = self.lr * decay_fraction
 
 
-
 class SGD(Optimizer):
     def __init__(self, model, loss, lr):
         super().__init__(model, loss, lr)
@@ -40,10 +39,25 @@ class SGD(Optimizer):
 class Momentum(Optimizer):
     def __init__(self, model, loss, lr, beta):
         super().__init__(model, loss, lr)
-        self.v = [[np.zeros(p.shape) for p in layer.params] for layer in model.layers][::-1]
         self.beta = beta
+        self.v = [[np.zeros(p.shape) for p in layer.params] for layer in model.layers][::-1]
 
     def update_param(self, param, dw, i, j):
         self.v[i][j] = self.beta*self.v[i][j]+(1-self.beta)*dw
         param += -self.lr*self.v[i][j]
+
+
+class Adam(Optimizer):
+    def __init__(self, model, loss, lr, beta_1=0.9, beta_2=0.999, eps=1e-8):
+        super().__init__(model, loss, lr)
+        self.beta_1, self.beta_2 = beta_1, beta_2
+        self.eps = eps
+        self.m = [[np.zeros(p.shape) for p in layer.params] for layer in model.layers][::-1]
+        self.v = [[np.zeros(p.shape) for p in layer.params] for layer in model.layers][::-1]
+
+    def update_param(self, param, dw, i, j):
+        self.m[i][j] = self.beta_1*self.m[i][j]+(1-self.beta_1)*dw
+        self.v[i][j] = self.beta_2*self.v[i][j]+(1-self.beta_2)*np.square(dw)
+        m_, v_ = self.m[i][j]/(1-self.beta_1), self.v[i][j]/(1-self.beta_2)
+        param += -self.lr/(np.sqrt(v_)+self.eps)*m_
 
