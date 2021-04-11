@@ -14,29 +14,24 @@ data:
 model:
   input_dim: 784
   fc_layer_dims:
+    - 512
     - 128
-    - 128
-    - 128
-    - 32
     - 10
   activation: 'ReLu'
   dropout_p: 0.01  # Set to False if no dropout
   batchnorm: False  # Set to False if no batchnorm
 
-
 train:
   batch_size: 64
   optimizer:
-    name: 'SGD'
+    name: 'momentum'
     lr: 0.1
     beta: 0.9
   epochs: 100
   lr_decay:
-    use: True
+    use: False
     decay_fraction: 0.5
     decay_frequency: 10
-
-
 
 eval:
   batch_size: 64

@@ -1,16 +1,14 @@
-import numpy as np
 import random
-import matplotlib.pyplot as plt
-from tqdm import tqdm
+
+import numpy as np
 import yaml
 
-from nn.optimizers import SGD, Momentum
-from nn.losses import CrossEntropy
-from nn.activations import ReLu, LeakyReLu, SoftMax
-from nn.layers import Linear, DropOut, BatchNorm
-from nn import Model
 from mnist_dataset import MnistDataset
-
+from nn import Model
+from nn.activations import ReLu, LeakyReLu, SoftMax
+from nn.layers import Linear, BatchNorm, DropOut
+from nn.optimizers import SGD, Momentum
+import augmentations
 
 def set_seed(seed=43):
     np.random.seed(seed)
@@ -32,11 +30,11 @@ def load_data(data_config):
 
 def get_datasets(config):
     # DATA
-    images, labels = load_data(config['data'])
+    images, labels = load_data(config['data']['dev'])
 
     # Training- and Validation-split
     n_all_ims = images.shape[0]
-    n_train_ims = round(n_all_ims * config['data']['train_fraction'])
+    n_train_ims = round(n_all_ims * config['data']['dev']['train_fraction'])
 
     idx_train = np.random.choice(range(n_all_ims), n_train_ims, replace=False)
     idx_val = list(set(range(n_all_ims)) - set(idx_train))
@@ -47,7 +45,7 @@ def get_datasets(config):
 
     X_val = images[idx_val, :]
     y_val = labels[idx_val]
-    val_dataset = MnistDataset(X_val, y_val, batch_size=config['train']['batch_size'])
+    val_dataset = MnistDataset(X_val, y_val, batch_size=config['eval']['batch_size'], transforms=get_transforms(config["data"]["augmentations"]))
 
     return train_dataset, val_dataset
 
@@ -83,7 +81,7 @@ def get_model(model_config):
     for layer_dim in fc_layer_dims[:-1]:
         layers.append(Linear(input_dim, layer_dim))
         if batchnorm:
-            layers.append(BatchNorm(layer_dim))
+            layers.append(BatchNorm(layer_dim, gamma=batchnorm))
         if dropout_p:
             layers.append(DropOut(dropout_p))
         layers.append(activation_f())
@@ -92,66 +90,17 @@ def get_model(model_config):
     layers.append(SoftMax())
     return Model(layers)
 
+def get_transforms(augmentation_config):
+    aug_funcs = []
+    all_funcs_dict = augmentations.__dict__
+    for aug_identifier in augmentation_config:
+        if aug_identifier in all_funcs_dict:
+            aug_funcs.append(all_funcs_dict[aug_identifier])
 
-if __name__ == "__main__":
+    return aug_funcs
+
+def get_config():
     config_path = 'config.yaml'
     with open(config_path) as fd:
         config = yaml.load(fd, yaml.FullLoader)
-
-    # Setting seed for reproducability
-    set_seed()
-
-    # Get data
-    train_dataset, val_dataset = get_datasets(config)
-
-    # MODEL
-    model = get_model(config['model'])
-    # Define loss
-    loss = CrossEntropy()
-    # Define optimizer
-    optimizer = get_optimizer(config['train']['optimizer'], model, loss)
-
-    # Main loop
-    train_loss_hist, val_loss_hist, val_acc_hist = list(), list(), list()
-    pbar = tqdm(range(config['train']['epochs']))
-    for i in pbar:
-        # TRAINING
-        model.train()
-        for j in range(len(train_dataset)):
-            x, y = train_dataset[j]
-            train_loss = optimizer.step(x, y)
-            train_loss_hist.append((i + j / len(train_dataset), train_loss))
-
-        # VALIDATION
-        model.eval()
-        y_hat_hist, y_hist = list(), list()
-        for j in range(len(val_dataset)):
-            x_val, y_val = val_dataset[j]
-            y_hat = model.forward(x_val)
-            y_hat_hist.append(y_hat), y_hist.append(y_val)
-
-        y_hat = np.vstack(y_hat_hist)
-        y = np.vstack(y_hist)
-        val_loss = loss.forward(y, y_hat)
-        val_loss_hist.append((i+1, val_loss))
-
-        preds = np.argmax(y_hat, axis=1)
-        real = np.argmax(y, axis=1)
-        val_acc = (preds == real).mean()
-        val_acc_hist.append(val_acc)
-        pbar.set_postfix({'val_acc': val_acc})
-
-    plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train')
-    plt.plot(np.array(val_loss_hist)[:, 0], np.array(val_loss_hist)[:, 1], label='valid')
-    plt.legend()
-    plt.show()
-
-    plt.plot(np.array(val_acc_hist), label='val acc')
-    plt.legend()
-    plt.show()
-
-
-
-
-
-
+    return config
