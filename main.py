@@ -1,21 +1,24 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from network import Linear, ReLu, LeakyReLu, SoftMax, Model, Optimizer, MSE, CrossEntropy
+from network import Linear, ReLu, LeakyReLu, SoftMax, Model, SGD, Momentum, MSE, CrossEntropy
 from mnist_dataset import MnistDataset
+
 
 def set_seed(seed=43):
     np.random.seed(seed)
     random.seed(seed)
 
+
 def img_reshape(imgs): # Simpel reshaping
     if len(imgs.shape) == 3:
         num_imgs = imgs.shape[0]
-        return imgs.reshape((num_imgs,-1))
+        return imgs.reshape((num_imgs, -1))
     elif len(imgs.shape) == 2:
         return imgs.reshape(-1)
     else:
         print("Input needs to be array with shape of length 2 or 3")
+
 
 if __name__ == "__main__":
     # Setting seed for reproducability
@@ -48,12 +51,12 @@ if __name__ == "__main__":
     val_dataset = MnistDataset(X_val, y_val, batch_size=X_val.shape[0])
 
     # MODEL
-    layers = [Linear(784, 32), LeakyReLu(), Linear(32, 10), SoftMax()]
+    layers = [Linear(784, 32), ReLu(), Linear(32, 10), SoftMax()]
     model = Model(layers)
     # Define loss
     loss = CrossEntropy()
     # Define optimizer
-    optimizer = Optimizer(model, loss, lr=0.1)
+    optimizer = SGD(model, loss, lr=0.1)
 
     # TRAINING
     loss_hist = list()
