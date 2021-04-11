@@ -9,6 +9,7 @@ data:
   test:
     image_path: './data/train-images-idx3-ubyte'
     label_path: './data/train-labels-idx1-ubyte'
+  augmentations: ["crop_image"]
 
 model:
   input_dim: 784

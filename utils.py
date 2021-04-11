@@ -8,7 +8,7 @@ from nn import Model
 from nn.activations import ReLu, LeakyReLu, SoftMax
 from nn.layers import Linear, BatchNorm, DropOut
 from nn.optimizers import SGD, Momentum
-
+import augmentations
 
 def set_seed(seed=43):
     np.random.seed(seed)
@@ -45,7 +45,7 @@ def get_datasets(config):
 
     X_val = images[idx_val, :]
     y_val = labels[idx_val]
-    val_dataset = MnistDataset(X_val, y_val, batch_size=config['eval']['batch_size'])
+    val_dataset = MnistDataset(X_val, y_val, batch_size=config['eval']['batch_size'], transforms=get_transforms(config["data"]["augmentations"]))
 
     return train_dataset, val_dataset
 
@@ -90,6 +90,14 @@ def get_model(model_config):
     layers.append(SoftMax())
     return Model(layers)
 
+def get_transforms(augmentation_config):
+    aug_funcs = []
+    all_funcs_dict = augmentations.__dict__
+    for aug_identifier in augmentation_config:
+        if aug_identifier in all_funcs_dict:
+            aug_funcs.append(all_funcs_dict[aug_identifier])
+
+    return aug_funcs
 
 def get_config():
     config_path = 'config.yaml'
