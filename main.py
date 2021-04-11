@@ -77,10 +77,13 @@ def get_model(model_config):
     fc_layer_dims = model_config['fc_layer_dims']
     activation_f = get_activation_f(model_config['activation'])
     dropout_p = model_config['dropout_p']
+    batchnorm = model_config['batchnorm']
 
     layers = list()
     for layer_dim in fc_layer_dims[:-1]:
         layers.append(Linear(input_dim, layer_dim))
+        if batchnorm:
+            layers.append(BatchNorm(layer_dim))
         if dropout_p:
             layers.append(DropOut(dropout_p))
         layers.append(activation_f())

@@ -11,6 +11,8 @@ model:
     - 10
   activation: 'ReLu'
   dropout_p: False  # Set to False if no dropout
+  batchnorm: False
+
 
 train:
   batch_size: 64
