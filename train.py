@@ -24,12 +24,15 @@ if __name__ == "__main__":
     # Main loop
     train_loss_hist, val_loss_hist, val_acc_hist = list(), list(), list()
     pbar = tqdm(range(config['train']['epochs']))
+    lr_decay_config = config['train']['lr_decay']
     for i in pbar:
         # TRAINING
         model.train()
         for j in range(len(train_dataset)):
             x, y = train_dataset[j]
             train_loss = optimizer.step(x, y)
+            if lr_decay_config['use']:
+                optimizer.decay_learning_rate(i, lr_decay_config['decay_fraction'], lr_decay_config['decay_frequency'])
             train_loss_hist.append((i + j / len(train_dataset), train_loss))
 
         # VALIDATION
