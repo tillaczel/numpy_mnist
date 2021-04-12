@@ -10,3 +10,8 @@ It is an implementation of a feed forward neural network in numpy for the MNIST 
     ```
     python3 test.py
     ```
+   
+## Best training so far
+We can see overfitting...
+![img.png](logs/loss.png)
+![img.png](logs/img.png)
