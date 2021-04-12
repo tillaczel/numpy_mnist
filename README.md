@@ -13,6 +13,6 @@ It is an implementation of a feed forward neural network in numpy for the MNIST 
    
 ## Results
 Validation accuracy: ~98%
-![img.png](logs/loss.png)
-![img.png](logs/img.png)
+![img.png](results/loss.png)
+![img.png](results/img.png)
 
