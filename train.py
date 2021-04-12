@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import os
 
 from nn.losses import CrossEntropy
 from utils import set_seed, get_datasets, get_optimizer, get_model, get_config
@@ -55,10 +56,16 @@ if __name__ == "__main__":
         pbar.set_postfix({'val_acc': val_acc})
 
     # Plots
+    fig = plt.figure(figsize=(8, 8))
     plt.plot(np.array(train_loss_hist)[:, 0], np.array(train_loss_hist)[:, 1], label='train')
     plt.plot(np.array(val_loss_hist)[:, 0], np.array(val_loss_hist)[:, 1], label='valid')
     plt.legend()
     plt.show()
+    path = config['experiment']['loss_plot_path']
+    dir_path = os.path.dirname(os.path.abspath(path))
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    fig.savefig(path)
 
     plt.plot(np.array(val_acc_hist), label='val acc')
     plt.legend()

@@ -7,7 +7,7 @@ from mnist_dataset import MnistDataset
 from nn import Model
 from nn.activations import ReLu, LeakyReLu, SoftMax
 from nn.layers import Linear, BatchNorm, DropOut
-from nn.optimizers import SGD, Momentum
+from nn.optimizers import SGD, Momentum, Adam
 import augmentations
 
 def set_seed(seed=43):
@@ -41,11 +41,11 @@ def get_datasets(config):
 
     X_train = images[idx_train, :]
     y_train = labels[idx_train]
-    train_dataset = MnistDataset(X_train, y_train, batch_size=config['train']['batch_size'])
+    train_dataset = MnistDataset(X_train, y_train, batch_size=config['train']['batch_size'], transforms=get_transforms(config["data"]["augmentations"]))
 
     X_val = images[idx_val, :]
     y_val = labels[idx_val]
-    val_dataset = MnistDataset(X_val, y_val, batch_size=config['eval']['batch_size'], transforms=get_transforms(config["data"]["augmentations"]))
+    val_dataset = MnistDataset(X_val, y_val, batch_size=config['eval']['batch_size'])
 
     return train_dataset, val_dataset
 
@@ -57,6 +57,8 @@ def get_optimizer(optimizer_config, model, loss):
         return SGD(model, loss, lr=lr)
     elif name == 'momentum':
         return Momentum(model, loss, lr=lr, beta=optimizer_config['beta'])
+    elif name == 'adam':
+        return Adam(model, loss, lr=lr, beta_1=optimizer_config['beta_1'], beta_2=optimizer_config['beta_2'])
     else:
         raise ValueError(f'Invalid optimizer: {name}')
 

@@ -15,7 +15,7 @@ class Linear(Layer):
         self.output_dim = output_dim
 
         self.w = np.random.normal(0, (2/input_dim)**0.5, (input_dim, output_dim))
-        self.b = np.random.normal(0, 1, (1, output_dim))
+        self.b = np.zeros((1, output_dim))
 
     def forward(self, x):
         return x@self.w+self.b
