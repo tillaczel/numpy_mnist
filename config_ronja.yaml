@@ -15,7 +15,7 @@ model:
   input_dim: 784
   fc_layer_dims:
     - 512
-    - 128
+    - 256
     - 10
   activation: 'ReLu'
   dropout_p: 0.01  # Set to False if no dropout
