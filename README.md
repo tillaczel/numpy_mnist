@@ -6,7 +6,7 @@ It is an implementation of a feed forward neural network in numpy for the MNIST 
 
 ## Running the experiment
 1. Set the path to the test data in the config.yaml under *data.test*. (As default we have added the provided training data.)
-2. Run the [train.py](numpy_mnist/train.py) by running following command.
+2. Run the [train.py](numpy_mnist/test.py) by running following command.
     ```
     python3 test.py
     ```
