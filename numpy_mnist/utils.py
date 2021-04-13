@@ -109,7 +109,7 @@ def get_transforms(augmentation_config):
 
 
 def get_config():
-    config_path = 'config.yaml'
+    config_path = 'numpy_mnist/config.yaml'
     with open(config_path) as fd:
         config = yaml.load(fd, yaml.FullLoader)
     return config

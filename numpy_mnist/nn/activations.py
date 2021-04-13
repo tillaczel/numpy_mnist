@@ -1,6 +1,6 @@
 import numpy as np
 
-from nn import Layer
+from numpy_mnist.nn import Layer
 
 
 class LeakyReLu(Layer):

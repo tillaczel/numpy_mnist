@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import set_seed, load_data, get_config, get_datasets, get_optimizer, get_model
+from utils import load_data, get_config, get_model
 from mnist_dataset import MnistDataset
 
 

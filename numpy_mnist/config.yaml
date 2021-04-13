@@ -1,15 +1,15 @@
 experiment:
   model_path: 'results/params.npy'
-  loss_plot_path: 'results'
+  plot_path: 'results'
 
 data:
   dev:
-    image_path: './data/train-images-idx3-ubyte'
-    label_path: './data/train-labels-idx1-ubyte'
+    image_path: 'data/train-images-idx3-ubyte'
+    label_path: 'data/train-labels-idx1-ubyte'
     train_fraction: 0.8
   test:
-    image_path: './data/train-images-idx3-ubyte'
-    label_path: './data/train-labels-idx1-ubyte'
+    image_path: 'data/train-images-idx3-ubyte'
+    label_path: 'data/train-labels-idx1-ubyte'
   augmentations: []
 
 model:
@@ -24,7 +24,7 @@ model:
   batchnorm: False  # Set to False if no batchnorm
 
 train:
-  epochs: 20
+  epochs: 30
   batch_size: 64
   optimizer:
     name: 'adam'

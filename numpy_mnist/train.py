@@ -56,7 +56,7 @@ if __name__ == "__main__":
         pbar.set_postfix({'val_acc': val_acc})
 
     # Plots
-    path = config['experiment']['loss_plot_path']
+    path = config['experiment']['plot_path']
     dir_path = os.path.dirname(os.path.abspath(path))
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
