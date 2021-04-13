@@ -1,6 +1,6 @@
 import numpy as np
 
-from numpy_mnist.nn import Layer
+from nn import Layer
 
 
 class Linear(Layer):
