@@ -3,7 +3,7 @@ from math import floor, ceil
 import cv2
 from skimage import filters
 
-
+# Todo: make it work
 def reflect_x_image(image): # okay for 0, 8 (maybe 1)
     N = len(image)
     ref_mat = []
@@ -19,6 +19,8 @@ def reflect_x_image(image): # okay for 0, 8 (maybe 1)
     result = new_img
     return result
 
+
+# Todo: make it work
 def reflect_y_image(image, axis): # okay for 0, 1, 8
     N = len(image)
     ref_mat = []
@@ -34,6 +36,8 @@ def reflect_y_image(image, axis): # okay for 0, 1, 8
     result = new_img
     return result
 
+
+# Todo: make it work
 def rotate_cv_image(image):
     angle = np.random.randint(-20,20,1)
     image_center = tuple(np.array(image.shape[1::-1]) / 2)
@@ -41,6 +45,8 @@ def rotate_cv_image(image):
     result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
     return result
 
+
+# Todo: vectorize
 def rotate_image(image):
     N = len(image)
     angle = np.random.randint(-20,20,N)
@@ -59,7 +65,7 @@ def rotate_image(image):
     return result
 
 
-
+# Todo: make it work
 def translate_image(image):
     N = len(image)
     translation = [] 
@@ -76,13 +82,14 @@ def translate_image(image):
     return result
 
 
-
+# Todo: make it work
 def crop_image(image):  # How do we resize after crop??
     pixels_crop = np.random.randint(1, 4)
     result = image[pixels_crop:-pixels_crop, pixels_crop:-pixels_crop]
     return result
 
 
+# Todo: vectorize
 def sqeeze_image(image):
     N = len(image)
     frac = np.random.randint(70,100,N)/100
@@ -109,6 +116,8 @@ def noise_image(image):
     result = image + noise
     return result
 
+
+# Todo: make it faster
 def blur_image(image):
     t = np.random.randint(3,11,1)/10
     def gauss2D(n_x,n_y,t):
@@ -121,6 +130,7 @@ def blur_image(image):
     return result
 
 
+# Todo: vectorize
 def non_linear_image(image):
     N = len(image)
     non_lin_funcs = {}
@@ -135,3 +145,37 @@ def non_linear_image(image):
         new_img[:,:,j] = func(image[:,:,j],j)
     result = new_img
     return result
+
+
+def rotation(img):
+    angle = 10
+    angle = int(np.random.uniform(-angle, angle))
+    h, w = img.shape[:2]
+    M = cv2.getRotationMatrix2D((int(w/2), int(h/2)), angle, 1)
+    img = cv2.warpAffine(img, M, (w, h))
+    return img
+
+
+from scipy.ndimage.interpolation import map_coordinates
+from scipy.ndimage.filters import gaussian_filter
+
+
+def elastic_transform(image):
+    """Elastic deformation of images as described in [Simard2003]_.
+    .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
+       Convolutional Neural Networks applied to Visual Document Analysis", in
+       Proc. of the International Conference on Document Analysis and
+       Recognition, 2003.
+    """
+    alpha, sigma = 1, 1
+    assert len(image.shape) == 2
+
+    shape = image.shape
+
+    dx = gaussian_filter((np.random.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
+    dy = gaussian_filter((np.random.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
+    x, y = np.meshgrid(np.arange(shape[0]), np.arange(shape[1]), indexing='ij')
+    indices = np.reshape(x + dx, (-1, 1)), np.reshape(y + dy, (-1, 1))
+    result = map_coordinates(image, indices, order=1).reshape(shape)
+    return result
+

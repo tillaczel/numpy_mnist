@@ -8,7 +8,8 @@ from nn import Model
 from nn.activations import ReLu, LeakyReLu, SoftMax
 from nn.layers import Linear, BatchNorm, DropOut
 from nn.optimizers import SGD, Momentum, Adam
-import augmentations
+from augmentations import rotation, elastic_transform
+
 
 def set_seed(seed=43):
     np.random.seed(seed)
@@ -41,7 +42,8 @@ def get_datasets(config):
 
     X_train = images[idx_train, :]
     y_train = labels[idx_train]
-    train_dataset = MnistDataset(X_train, y_train, batch_size=config['train']['batch_size'], transforms=get_transforms(config["data"]["augmentations"]))
+    transforms = get_transforms(config["data"]["augmentations"])
+    train_dataset = MnistDataset(X_train, y_train, batch_size=config['train']['batch_size'], transforms=transforms)
 
     X_val = images[idx_val, :]
     y_val = labels[idx_val]
@@ -92,17 +94,23 @@ def get_model(model_config):
     layers.append(SoftMax())
     return Model(layers)
 
+
 def get_transforms(augmentation_config):
     aug_funcs = []
-    all_funcs_dict = augmentations.__dict__
     for aug_identifier in augmentation_config:
-        if aug_identifier in all_funcs_dict:
-            aug_funcs.append(all_funcs_dict[aug_identifier])
+        if aug_identifier == 'rotation':
+            aug_funcs.append(rotation)
+        elif aug_identifier == 'elastic_transform':
+            aug_funcs.append(elastic_transform)
+        else:
+            raise ValueError(f'Invalid augmentation: {aug_identifier}')
 
     return aug_funcs
+
 
 def get_config():
     config_path = 'config.yaml'
     with open(config_path) as fd:
         config = yaml.load(fd, yaml.FullLoader)
     return config
+

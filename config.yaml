@@ -1,6 +1,6 @@
 experiment:
   model_path: 'results/params.npy'
-  loss_plot_path: 'results/loss.png'
+  loss_plot_path: 'results'
 
 data:
   dev:
@@ -20,12 +20,12 @@ model:
     - 128
     - 10
   activation: 'ReLu'
-  dropout_p: 0.001  # Set to False if no dropout
+  dropout_p: 0.1  # Set to False if no dropout
   batchnorm: False  # Set to False if no batchnorm
 
 train:
-  epochs: 50
-  batch_size: 512
+  epochs: 20
+  batch_size: 64
   optimizer:
     name: 'adam'
     lr: 0.001
